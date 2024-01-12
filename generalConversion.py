@@ -27,7 +27,7 @@ import numpy as np
 
 
 
-def convertData(data_raw):
+def convertData(data_raw, withSalePrice):
 
     
     def oneHotEncode(column, uniqueValues):
@@ -1071,12 +1071,6 @@ def convertData(data_raw):
     oneHotEncodedSaleCondition = oneHotEncode(SaleCondition, uniqueSaleCondition)
     print(oneHotEncodedSaleCondition[:10])
 
-
-    #Sale Price
-    SalePrice = data[:,80].copy().astype(float)
-    
-
-    
     #MERGE ALL FEATURES
 
     finalMatrix = np.concatenate((oneHotEncodedMSSubClass, oneHotEncodedMSZoning, LotFrontage.reshape(-1,1),
@@ -1106,16 +1100,22 @@ def convertData(data_raw):
 
 
     print(finalMatrix.shape)
-
-    return finalMatrix
+    
+    if withSalePrice:
+        #Sale Price
+        SalePrice = data[:,80].copy().astype(float)
+        return finalMatrix, SalePrice
+    else:
+        return finalMatrix
+    
     
 
-def createDataFromPath(path):
+def createDataFromPath(path, withSalePrice):
     with open(path) as f:
         lines = f.readlines()
         lines = lines[1:]
 
         data_raw = np.array([line.split(",") for line in lines])
 
-        return convertData(data_raw)
+        return convertData(data_raw, withSalePrice)
 
